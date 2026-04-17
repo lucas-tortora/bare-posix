@@ -18,6 +18,8 @@ npm i bare-posix
 
 #### `posix.getgroups()`
 
+#### `posix.getgrnam(name)`
+
 ## License
 
 Apache-2.0

@@ -20,3 +20,7 @@ test('geteuid', (t) => {
 test('getgroups', (t) => {
   t.comment(posix.getgroups())
 })
+
+test('getgrnam', (t) => {
+  t.is(posix.getgrnam('group_not_found'), null)
+})

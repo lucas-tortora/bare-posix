@@ -1,4 +1,5 @@
 #include <bare.h>
+#include <grp.h>
 #include <js.h>
 #include <unistd.h>
 
@@ -88,6 +89,97 @@ bare_posix_getgroups(js_env_t *env, js_callback_info_t *info) {
 }
 
 static js_value_t *
+bare_posix_getgrnam(js_env_t *env, js_callback_info_t *info) {
+  int err;
+
+  size_t argc = 1;
+  js_value_t *argv[1];
+
+  err = js_get_callback_info(env, info, &argc, argv, NULL, NULL);
+  assert(err == 0);
+
+  assert(argc == 1);
+
+  size_t name_len;
+  err = js_get_value_string_utf8(env, argv[0], NULL, 0, &name_len);
+  assert(err == 0);
+
+  utf8_t *name = malloc(++name_len);
+  err = js_get_value_string_utf8(env, argv[0], name, name_len, &name_len);
+  assert(err == 0);
+
+  errno = 0;
+
+  struct group *grp = getgrnam((char *) name);
+
+  if (errno != 0) {
+    err = uv_translate_sys_error(errno);
+
+    err = js_throw_error(env, uv_err_name(err), uv_strerror(err));
+    assert(err == 0);
+
+    free(name);
+
+    return NULL;
+  }
+
+  js_value_t *result;
+
+  if (grp == NULL) {
+    err = js_get_null(env, &result);
+    assert(err == 0);
+
+    free(name);
+
+    return result;
+  }
+
+  err = js_create_object(env, &result);
+  assert(err == 0);
+
+  js_value_t *groupname;
+  err = js_create_string_utf8(env, (utf8_t *) grp->gr_name, strlen(grp->gr_name), &groupname);
+  assert(err == 0);
+
+  err = js_set_named_property(env, result, "groupname", groupname);
+  assert(err == 0);
+
+  js_value_t *passwd;
+  err = js_create_string_utf8(env, (utf8_t *) grp->gr_passwd, strlen(grp->gr_passwd), &passwd);
+  assert(err == 0);
+
+  err = js_set_named_property(env, result, "passwd", passwd);
+  assert(err == 0);
+
+  js_value_t *gid;
+  err = js_create_int32(env, grp->gr_gid, &gid);
+  assert(err == 0);
+
+  err = js_set_named_property(env, result, "gid", gid);
+  assert(err == 0);
+
+  js_value_t *members;
+  err = js_create_array(env, &members);
+  assert(err == 0);
+
+  for (uint32_t i = 0; grp->gr_mem[i] != NULL; i++) {
+    js_value_t *member;
+    err = js_create_string_utf8(env, (utf8_t *) grp->gr_mem[i], strlen(grp->gr_mem[i]), &member);
+    assert(err == 0);
+
+    err = js_set_element(env, members, i, member);
+    assert(err == 0);
+  }
+
+  err = js_set_named_property(env, result, "members", members);
+  assert(err == 0);
+
+  free(name);
+
+  return result;
+}
+
+static js_value_t *
 bare_posix_exports(js_env_t *env, js_value_t *exports) {
   int err;
 
@@ -105,6 +197,7 @@ bare_posix_exports(js_env_t *env, js_value_t *exports) {
   V("getuid", bare_posix_getuid)
   V("geteuid", bare_posix_geteuid)
   V("getgroups", bare_posix_getgroups)
+  V("getgrnam", bare_posix_getgrnam)
 #undef V
 
   return exports;
