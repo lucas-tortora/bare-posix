@@ -51,11 +51,25 @@ bare_posix_getgroups(js_env_t *env, js_callback_info_t *info) {
   int err;
 
   int len = getgroups(0, NULL);
-  if (len == -1) return NULL;
+  if (len == -1) {
+    err = uv_translate_sys_error(errno);
+
+    err = js_throw_error(env, uv_err_name(err), uv_strerror(err));
+    assert(err == 0);
+
+    return NULL;
+  }
 
   gid_t gids[len];
   len = getgroups(len, gids);
-  if (len == -1) return NULL;
+  if (len == -1) {
+    err = uv_translate_sys_error(errno);
+
+    err = js_throw_error(env, uv_err_name(err), uv_strerror(err));
+    assert(err == 0);
+
+    return NULL;
+  }
 
   js_value_t *result;
   err = js_create_array_with_length(env, len, &result);
