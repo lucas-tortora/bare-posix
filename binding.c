@@ -1,6 +1,7 @@
 #include <bare.h>
 #include <grp.h>
 #include <js.h>
+#include <pwd.h>
 #include <unistd.h>
 
 static js_value_t *
@@ -180,6 +181,109 @@ bare_posix_getgrnam(js_env_t *env, js_callback_info_t *info) {
 }
 
 static js_value_t *
+bare_posix_getpwnam(js_env_t *env, js_callback_info_t *info) {
+  int err;
+
+  size_t argc = 1;
+  js_value_t *argv[1];
+
+  err = js_get_callback_info(env, info, &argc, argv, NULL, NULL);
+  assert(err == 0);
+
+  assert(argc == 1);
+
+  size_t name_len;
+  err = js_get_value_string_utf8(env, argv[0], NULL, 0, &name_len);
+  assert(err == 0);
+
+  utf8_t *name = malloc(++name_len);
+  err = js_get_value_string_utf8(env, argv[0], name, name_len, &name_len);
+  assert(err == 0);
+
+  errno = 0;
+
+  struct passwd *pwd = getpwnam((char *) name);
+
+  if (errno != 0) {
+    err = uv_translate_sys_error(errno);
+
+    err = js_throw_error(env, uv_err_name(err), uv_strerror(err));
+    assert(err == 0);
+
+    free(name);
+
+    return NULL;
+  }
+
+  js_value_t *result;
+
+  if (pwd == NULL) {
+    err = js_get_null(env, &result);
+    assert(err == 0);
+
+    free(name);
+
+    return result;
+  }
+
+  err = js_create_object(env, &result);
+  assert(err == 0);
+
+  js_value_t *username;
+  err = js_create_string_utf8(env, (utf8_t *) pwd->pw_name, strlen(pwd->pw_name), &username);
+  assert(err == 0);
+
+  err = js_set_named_property(env, result, "username", username);
+  assert(err == 0);
+
+  js_value_t *passwd;
+  err = js_create_string_utf8(env, (utf8_t *) pwd->pw_passwd, strlen(pwd->pw_passwd), &passwd);
+  assert(err == 0);
+
+  err = js_set_named_property(env, result, "passwd", passwd);
+  assert(err == 0);
+
+  js_value_t *uid;
+  err = js_create_int32(env, pwd->pw_uid, &uid);
+  assert(err == 0);
+
+  err = js_set_named_property(env, result, "uid", uid);
+  assert(err == 0);
+
+  js_value_t *gid;
+  err = js_create_int32(env, pwd->pw_gid, &gid);
+  assert(err == 0);
+
+  err = js_set_named_property(env, result, "gid", gid);
+  assert(err == 0);
+
+  js_value_t *gecos;
+  err = js_create_string_utf8(env, (utf8_t *) pwd->pw_gecos, strlen(pwd->pw_gecos), &gecos);
+  assert(err == 0);
+
+  err = js_set_named_property(env, result, "gecos", gecos);
+  assert(err == 0);
+
+  js_value_t *homedir;
+  err = js_create_string_utf8(env, (utf8_t *) pwd->pw_dir, strlen(pwd->pw_dir), &homedir);
+  assert(err == 0);
+
+  err = js_set_named_property(env, result, "homedir", homedir);
+  assert(err == 0);
+
+  js_value_t *shell;
+  err = js_create_string_utf8(env, (utf8_t *) pwd->pw_shell, strlen(pwd->pw_shell), &shell);
+  assert(err == 0);
+
+  err = js_set_named_property(env, result, "shell", shell);
+  assert(err == 0);
+
+  free(name);
+
+  return result;
+}
+
+static js_value_t *
 bare_posix_exports(js_env_t *env, js_value_t *exports) {
   int err;
 
@@ -198,6 +302,7 @@ bare_posix_exports(js_env_t *env, js_value_t *exports) {
   V("geteuid", bare_posix_geteuid)
   V("getgroups", bare_posix_getgroups)
   V("getgrnam", bare_posix_getgrnam)
+  V("getpwnam", bare_posix_getpwnam)
 #undef V
 
   return exports;

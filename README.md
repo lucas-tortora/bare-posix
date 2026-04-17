@@ -20,6 +20,8 @@ npm i bare-posix
 
 #### `posix.getgrnam(name)`
 
+#### `posix.getpwnam(name)`
+
 ## License
 
 Apache-2.0

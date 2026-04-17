@@ -16,3 +16,15 @@ export interface Group {
 }
 
 export function getgrnam(name: string): Group
+
+export interface Passwd {
+  username: string
+  passwd: string
+  uid: number
+  gid: number
+  gecos: string
+  homedir: string
+  shell: string
+}
+
+export function getpwnam(name: string): Passwd

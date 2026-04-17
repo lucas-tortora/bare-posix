@@ -11,3 +11,5 @@ exports.geteuid = binding.geteuid
 exports.getgroups = binding.getgroups
 
 exports.getgrnam = binding.getgrnam
+
+exports.getpwnam = binding.getpwnam

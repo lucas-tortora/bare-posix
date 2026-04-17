@@ -24,3 +24,7 @@ test('getgroups', (t) => {
 test('getgrnam', (t) => {
   t.is(posix.getgrnam('group_not_found'), null)
 })
+
+test('getpwnam', (t) => {
+  t.is(posix.getpwnam('user_not_found'), null)
+})
