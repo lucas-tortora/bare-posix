@@ -1,10 +1,18 @@
 export function getgid(): number
 
+export function setgid(id: number | string): void
+
 export function getegid(): number
+
+export function setegid(id: number | string): void
 
 export function getuid(): number
 
+export function setuid(id: number | string): void
+
 export function geteuid(): number
+
+export function seteuid(id: number | string): void
 
 export function getgroups(): number[]
 
