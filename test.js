@@ -1,11 +1,13 @@
 const test = require('brittle')
 const posix = require('.')
 
+const isWindows = Bare.platform === 'win32'
+
 test('getgid', (t) => {
   t.comment(posix.getgid())
 })
 
-test('setgid', (t) => {
+test('setgid', { skip: isWindows }, (t) => {
   t.execution(() => posix.setgid(posix.getgid()))
 })
 
@@ -13,7 +15,7 @@ test('getegid', (t) => {
   t.comment(posix.getegid())
 })
 
-test('setegid', (t) => {
+test('setegid', { skip: isWindows }, (t) => {
   t.execution(() => posix.setegid(posix.getegid()))
 })
 
@@ -21,7 +23,7 @@ test('getuid', (t) => {
   t.comment(posix.getuid())
 })
 
-test('setuid', (t) => {
+test('setuid', { skip: isWindows }, (t) => {
   t.execution(() => posix.setuid(posix.getuid()))
 })
 
@@ -29,7 +31,7 @@ test('geteuid', (t) => {
   t.comment(posix.geteuid())
 })
 
-test('seteuid', (t) => {
+test('seteuid', { skip: isWindows }, (t) => {
   t.execution(() => posix.seteuid(posix.geteuid()))
 })
 

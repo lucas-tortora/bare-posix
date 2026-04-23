@@ -23,7 +23,7 @@ export interface Group {
   members: string[]
 }
 
-export function getgrnam(name: string): Group
+export function getgrnam(name: string): Group | null
 
 export interface Passwd {
   username: string
@@ -35,4 +35,4 @@ export interface Passwd {
   shell: string
 }
 
-export function getpwnam(name: string): Passwd
+export function getpwnam(name: string): Passwd | null
