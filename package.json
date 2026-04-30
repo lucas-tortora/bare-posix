@@ -1,5 +1,4 @@
 {
-  "private": true,
   "name": "bare-posix",
   "version": "1.0.0",
   "description": "POSIX-specific bindings for Bare",
