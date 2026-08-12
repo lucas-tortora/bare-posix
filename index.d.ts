@@ -2,9 +2,11 @@
 export function getgid(): number
 
 /**
- * Set the real group ID of the calling process. Accepts a numeric ID or a group name, resolved via `getgrnam`.
+ * Set the real group ID of the calling process. Accepts a numeric ID or a group name, resolved via
+ * `getgrnam`.
  * @param id - The group to switch to: a numeric group ID, or a group name resolved via `getgrnam`.
- * @throws On platforms without POSIX support (android, win32), throws `Error: Platform not supported`.
+ * @throws On platforms without POSIX support (android, win32), throws `Error: Platform not
+ * supported`.
  */
 export function setgid(id: number | string): void
 
@@ -12,9 +14,11 @@ export function setgid(id: number | string): void
 export function getegid(): number
 
 /**
- * Set the effective group ID of the calling process. Accepts a numeric ID or a group name, resolved via `getgrnam`.
+ * Set the effective group ID of the calling process. Accepts a numeric ID or a group name, resolved
+ * via `getgrnam`.
  * @param id - The group to switch to: a numeric group ID, or a group name resolved via `getgrnam`.
- * @throws On platforms without POSIX support (android, win32), throws `Error: Platform not supported`.
+ * @throws On platforms without POSIX support (android, win32), throws `Error: Platform not
+ * supported`.
  */
 export function setegid(id: number | string): void
 
@@ -22,9 +26,11 @@ export function setegid(id: number | string): void
 export function getuid(): number
 
 /**
- * Set the real user ID of the calling process. Accepts a numeric ID or a username, resolved via `getpwnam`.
+ * Set the real user ID of the calling process. Accepts a numeric ID or a username, resolved via
+ * `getpwnam`.
  * @param id - The user to switch to: a numeric user ID, or a username resolved via `getpwnam`.
- * @throws On platforms without POSIX support (android, win32), throws `Error: Platform not supported`.
+ * @throws On platforms without POSIX support (android, win32), throws `Error: Platform not
+ * supported`.
  */
 export function setuid(id: number | string): void
 
@@ -32,9 +38,11 @@ export function setuid(id: number | string): void
 export function geteuid(): number
 
 /**
- * Set the effective user ID of the calling process. Accepts a numeric ID or a username, resolved via `getpwnam`.
+ * Set the effective user ID of the calling process. Accepts a numeric ID or a username, resolved
+ * via `getpwnam`.
  * @param id - The user to switch to: a numeric user ID, or a username resolved via `getpwnam`.
- * @throws On platforms without POSIX support (android, win32), throws `Error: Platform not supported`.
+ * @throws On platforms without POSIX support (android, win32), throws `Error: Platform not
+ * supported`.
  */
 export function seteuid(id: number | string): void
 
